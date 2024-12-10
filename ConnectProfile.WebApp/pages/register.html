@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <title>Register</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login here</a>.</p>
+    </div>
+
+    <script type="module">
+        import { register } from '../services/authApiService.js';
+
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            try {
+                await register({ username, email, password });
+                alert('Registration successful! Please login.');
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('Registration failed: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

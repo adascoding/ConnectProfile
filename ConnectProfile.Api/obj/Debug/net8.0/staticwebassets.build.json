@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "Vwcd4vNxoBCxDhMCa8BlBT0l2ZosXT+W3+zj65rJ2QU=",
+  "Source": "ConnectProfile.Api",
+  "BasePath": "_content/ConnectProfile.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

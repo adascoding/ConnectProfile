@@ -1,0 +1,362 @@
+[
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.AccountController",
+    "Method": "Login",
+    "RelativePath": "api/Account/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ConnectProfile.Api.Dtos.Account.LoginRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ConnectProfile.Api.Dtos.Account.LoginResponseDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.AccountController",
+    "Method": "Register",
+    "RelativePath": "api/Account/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ConnectProfile.Api.Dtos.Account.RegisterRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.ImageController",
+    "Method": "GetImageByAccountId",
+    "RelativePath": "api/Image/{accountId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.ImageController",
+    "Method": "UploadImage",
+    "RelativePath": "api/Image/upload",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "AccountId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "CreateUserInfo",
+    "RelativePath": "api/UserInfo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userInfoCreateDto",
+        "Type": "ConnectProfile.Api.Dtos.UserInfo.UserInfoCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ConnectProfile.Api.Entities.UserInfo",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "GetUserInfo",
+    "RelativePath": "api/UserInfo/{accountId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ConnectProfile.Api.Dtos.UserInfo.UserInfoDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateApartmentNumber",
+    "RelativePath": "api/UserInfo/{accountId}/ApartmentNumber",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "apartmentNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateCity",
+    "RelativePath": "api/UserInfo/{accountId}/City",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "city",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateEmail",
+    "RelativePath": "api/UserInfo/{accountId}/Email",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "email",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateFirstName",
+    "RelativePath": "api/UserInfo/{accountId}/FirstName",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "firstName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateHouseNumber",
+    "RelativePath": "api/UserInfo/{accountId}/HouseNumber",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "houseNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateLastName",
+    "RelativePath": "api/UserInfo/{accountId}/LastName",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "lastName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdatePersonalCode",
+    "RelativePath": "api/UserInfo/{accountId}/PersonalCode",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "personalCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdatePhoneNumber",
+    "RelativePath": "api/UserInfo/{accountId}/PhoneNumber",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "phoneNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ConnectProfile.Api.Controllers.UserInfoController",
+    "Method": "UpdateStreet",
+    "RelativePath": "api/UserInfo/{accountId}/Street",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "street",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
