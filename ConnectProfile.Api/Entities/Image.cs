@@ -6,8 +6,16 @@ public class Image
 {
     [Key]
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public byte[] ImageBytes { get; set; } = null!;
+
+    [Required, MaxLength(100)]
+    public string Name { get; set; }
+
+    [MaxLength(500)]
+    public string Description { get; set; }
+
+    [Required]
+    public byte[] ImageBytes { get; set; }
+
+    [Required]
     public Guid AccountId { get; set; }
 }

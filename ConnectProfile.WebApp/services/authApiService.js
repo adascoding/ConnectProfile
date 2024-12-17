@@ -1,5 +1,3 @@
-import { saveSession } from './sessionService.js';
-
 const API_BASE_URL = 'https://localhost:7187/api/account';
 
 async function login(loginData) {
@@ -13,10 +11,18 @@ async function login(loginData) {
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Login failed');
+        return {
+            success: false,
+            message: error.message || 'Login failed'
+        };
     }
 
-    return response.json();
+    const result = await response.json();
+    return {
+        success: true,
+        message: 'Login successful!',
+        data: result.data
+    };
 }
 
 async function register(registerData) {
@@ -30,31 +36,18 @@ async function register(registerData) {
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Registration failed');
+        return {
+            success: false,
+            message: error.message || 'Registration failed'
+        };
     }
 
-    return response.json();
+    const result = await response.json();
+    return {
+        success: true,
+        message: 'Registration successful!',
+        data: result.data
+    };
 }
 
-async function handleLogin(username, password) {
-    try {
-        const response = await login({ username, password });
-        console.log(response);
-        saveSession(response.token, response.userName, response.userId);
-        alert(`Welcome, ${response.userName}!`);
-    } catch (error) {
-        alert(`Login failed: ${error.message}`);
-    }
-}
-
-async function handleRegister(username, email, password) {
-    try {
-        await register({ username, email, password });
-        alert('Registration successful! Please log in.');
-        window.location.href = '../pages/login.html';
-    } catch (error) {
-        alert(`Registration failed: ${error.message}`);
-    }
-}
-
-export { login, register, handleLogin, handleRegister };
+export { login, register };

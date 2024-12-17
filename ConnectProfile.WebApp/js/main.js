@@ -1,20 +1,25 @@
 import { getProfileImage } from '../services/imageService.js';
 import { getUserInfo } from '../services/userInfoService.js';
-import { getUserId, getUsername, logout } from '../services/sessionService.js';
+import { getUserId, getUsername, logout, isLoggedIn } from '../services/sessionService.js';
+
+if (!isLoggedIn()) {
+    window.location.href = './index.html';
+};
+
+const usernameElement = document.getElementById('username');
+const profileImageElement = document.getElementById('profile-image');
+const uploadImageButton = document.getElementById('upload-image-button');
+const userInfoContainer = document.getElementById('user-info-container');
+const editInfoButton = document.getElementById('edit-info-button');
+const logoutButton = document.getElementById('logout-button');
+const username = getUsername();
+const userId = getUserId();
 
 const updateProfileInfo = async () => {
-    const usernameElement = document.getElementById('username');
-    const profileImageElement = document.getElementById('profile-image');
-    const uploadImageButton = document.getElementById('upload-image-button');
-    const userInfoContainer = document.getElementById('user-info-container');
-    const editInfoButton = document.getElementById('edit-info-button');
-    const logoutButton = document.getElementById('logout-button');
 
-    const username = getUsername();
-    usernameElement.textContent = username || 'User';
+    usernameElement.textContent = username;
 
     const setProfileImage = async () => {
-        const userId = getUserId();
         try {
             const imageBlob = await getProfileImage(userId);
             profileImageElement.src = imageBlob ? URL.createObjectURL(imageBlob) : '../assets/profile.jpg';
@@ -25,7 +30,6 @@ const updateProfileInfo = async () => {
     };
 
     const setUserInfo = async () => {
-        const userId = getUserId();
         try {
             const userInfo = await getUserInfo(userId);
 
@@ -60,7 +64,7 @@ const updateProfileInfo = async () => {
 
     logoutButton.onclick = () => {
         logout();
-        window.location.href = '/pages/login.html';
+        window.location.href = './login.html';
     };
 
     await setProfileImage();

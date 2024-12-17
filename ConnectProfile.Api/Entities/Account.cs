@@ -8,16 +8,16 @@ public class Account
     public Guid Id { get; set; }
 
     [Required, MaxLength(50)]
-    public string UserName { get; set; } = string.Empty;
+    public string UserName { get; set; }
 
     [Required, EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    public string Email { get; set; }
 
     [Required]
-    public byte[] PasswordHash { get; set; } = null!;
+    public byte[] PasswordHash { get; set; }
 
     [Required]
-    public byte[] PasswordSalt { get; set; } = null!;
+    public byte[] PasswordSalt { get; set; }
 
     [Required]
     public string Role { get; set; } = "User";

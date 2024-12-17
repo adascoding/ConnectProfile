@@ -4,6 +4,6 @@ namespace ConnectProfile.Api.Repositories.Interfaces;
 
 public interface IImageRepository
 {
-    Task AddImageAsync(Image image);
+    Task AddOrUpdateImageAsync(Image image);
     Task<Image?> GetImageByAccountIdAsync(Guid accountId);
 }

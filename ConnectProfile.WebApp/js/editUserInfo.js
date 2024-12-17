@@ -1,7 +1,16 @@
 import { getUserInfo, updateField } from '../services/userInfoService.js';
+import { isLoggedIn } from '../services/sessionService.js';
+
+if (!isLoggedIn()) {
+    window.location.href = './index.html';
+};
 
 const init = async () => {
     const form = document.getElementById('editUserInfoForm');
+    const backButton = document.getElementById('backButton');
+    const errorMessageDiv = document.getElementById('error-message');
+    
+    backButton.addEventListener('click', handleBackButtonClick);
 
     const accountId = sessionStorage.getItem('user_id');
 
@@ -12,6 +21,7 @@ const init = async () => {
 
     try {
         const userInfo = await getUserInfo();
+
         if (userInfo) {
             form.elements['firstName'].value = userInfo.firstName || '';
             form.elements['lastName'].value = userInfo.lastName || '';
@@ -23,11 +33,11 @@ const init = async () => {
             form.elements['houseNumber'].value = userInfo.address?.houseNumber || '';
             form.elements['apartmentNumber'].value = userInfo.address?.apartmentNumber || '';
         } else {
-            alert('No user information found.');
-            window.location.href = './userinfoadd.html';
+            window.location.href = 'userinfoadd.html';
         }
     } catch (error) {
-        alert(`Failed to load user info: ${error.message}`);
+        errorMessageDiv.style.display = 'block';
+        errorMessageDiv.textContent = `Failed to load user info: ${error.message}`;
         return;
     }
 
@@ -38,12 +48,25 @@ const init = async () => {
 
             try {
                 await updateField(accountId, field, value);
-                alert(`${field} updated successfully.`);
+                form.elements[field].disabled = true;
             } catch (error) {
-                alert(`Failed to update ${field}: ${error.message}`);
+                errorMessageDiv.style.display = 'block';
+                errorMessageDiv.textContent = `Failed to update ${field}: ${error.message}`;
             }
         });
     });
+
+    const formInputs = document.querySelectorAll('#editUserInfoForm input');
+    formInputs.forEach(input => input.addEventListener('focus', hideErrorMessage));
+};
+
+const handleBackButtonClick = () => {
+    window.location.href = './main.html';
+};
+
+const hideErrorMessage = () => {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.style.display = 'none';
 };
 
 init();

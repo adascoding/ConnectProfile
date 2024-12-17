@@ -117,3 +117,68 @@ a:hover {
 a:active {
     color: #00408f;
 }
+#error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px solid red;
+    background-color: #f8d7da;
+    border-radius: 5px;
+}
+form label {
+    display: block;
+    margin-top: 14px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.input-container label {
+    margin-bottom: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 100%;
+}
+
+.input-container input {
+    flex-grow: 1;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #007BFF;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.2s;
+}
+
+.input-container input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.update-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+    width: 24px;
+    height: 24px;
+}
+
+.update-button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.update-button:hover {
+    transform: scale(1.1);
+    background-color: white;
+}

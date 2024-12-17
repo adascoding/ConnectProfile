@@ -18,9 +18,15 @@
             <input type="text" id="city" placeholder="City" required>
             <input type="text" id="street" placeholder="Street" required>
             <input type="text" id="houseNumber" placeholder="House Number" required>
-            <input type="text" id="apartmentNumber" placeholder="Apartment Number">
+            <input type="text" id="apartmentNumber" placeholder="Apartment Number" required>
             <button type="button" id="saveButton">Save</button>
         </form>
+        
+        <div id="error-message" style="display: none;"></div>
+
+        <div">
+            <button id="backButton">Back</button>
+        </div>
     </div>
 
     <script type="module" src="../js/addUserInfo.js"></script>

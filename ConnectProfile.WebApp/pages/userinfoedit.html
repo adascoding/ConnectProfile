@@ -10,53 +10,74 @@
     <div class="container">
         <h1>Edit User Information</h1>
         <form id="editUserInfoForm">
-            <div>
+            <div class="input-container">
                 <label for="firstName">First Name:</label>
                 <input type="text" id="firstName" name="firstName">
-                <button type="button" data-field="firstName">Update</button>
+                <button type="button" class="update-button" data-field="firstName">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="lastName">Last Name:</label>
                 <input type="text" id="lastName" name="lastName">
-                <button type="button" data-field="lastName">Update</button>
+                <button type="button" class="update-button" data-field="lastName">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="personalCode">Personal Code:</label>
                 <input type="text" id="personalCode" name="personalCode">
-                <button type="button" data-field="personalCode">Update</button>
+                <button type="button" class="update-button" data-field="personalCode">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="phoneNumber">Phone Number:</label>
                 <input type="text" id="phoneNumber" name="phoneNumber">
-                <button type="button" data-field="phoneNumber">Update</button>
+                <button type="button" class="update-button" data-field="phoneNumber">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email">
-                <button type="button" data-field="email">Update</button>
+                <button type="button" class="update-button" data-field="email">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="city">City:</label>
                 <input type="text" id="city" name="city">
-                <button type="button" data-field="city">Update</button>
+                <button type="button" class="update-button" data-field="city">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="street">Street:</label>
                 <input type="text" id="street" name="street">
-                <button type="button" data-field="street">Update</button>
+                <button type="button" class="update-button" data-field="street">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="houseNumber">House Number:</label>
                 <input type="text" id="houseNumber" name="houseNumber">
-                <button type="button" data-field="houseNumber">Update</button>
+                <button type="button" class="update-button" data-field="houseNumber">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
-            <div>
+            <div class="input-container">
                 <label for="apartmentNumber">Apartment Number:</label>
                 <input type="text" id="apartmentNumber" name="apartmentNumber">
-                <button type="button" data-field="apartmentNumber">Update</button>
+                <button type="button" class="update-button" data-field="apartmentNumber">
+                    <img id="update-button" src="../assets/refresh-icon.png" alt="Update" class="icon">
+                </button>
             </div>
         </form>
-        
+        <div id="error-message" style="display: none;"></div>
+        <div>
+            <button id="backButton">Back</button>
+        </div>
     </div>
 
     <script type="module" src="../js/editUserInfo.js"></script>

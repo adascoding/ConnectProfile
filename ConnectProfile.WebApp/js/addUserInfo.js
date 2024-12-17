@@ -1,4 +1,9 @@
 import { saveUserInfo } from '../services/userInfoService.js';
+import { isLoggedIn } from '../services/sessionService.js';
+
+if (!isLoggedIn()) {
+    window.location.href = './index.html';
+};
 
 const handleSaveButtonClick = async (event) => {
     event.preventDefault();
@@ -16,22 +21,38 @@ const handleSaveButtonClick = async (event) => {
             City: city.value,
             Street: street.value,
             HouseNumber: houseNumber.value,
-            ApartmentNumber: apartmentNumber.value || null,
+            ApartmentNumber: apartmentNumber.value,
         },
     };
 
+    const errorMessageDiv = document.getElementById('error-message');
     try {
         await saveUserInfo(userInfo);
-        alert('User information saved successfully!');
         window.location.href = './main.html';
     } catch (error) {
-        alert(`Failed to save user information: ${error.message}`);
+        errorMessageDiv.style.display = 'block';
+        errorMessageDiv.textContent = `Failed to save user information: ${error.message}`;
     }
+};
+
+const handleBackButtonClick = () => {
+    window.location.href = './main.html';
+};
+
+const hideErrorMessage = () => {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.style.display = 'none';
 };
 
 const init = () => {
     const saveButton = document.getElementById('saveButton');
     saveButton.addEventListener('click', handleSaveButtonClick);
+
+    const backButton = document.getElementById('backButton');
+    backButton.addEventListener('click', handleBackButtonClick);
+
+    const formInputs = document.querySelectorAll('#addUserInfoForm input');
+    formInputs.forEach(input => input.addEventListener('focus', hideErrorMessage));
 };
 
 init();

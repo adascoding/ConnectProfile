@@ -1,10 +1,12 @@
+import { getToken } from './sessionService.js';
+
 const API_BASE_URL = 'https://localhost:7187/api/Image';
 
 async function uploadProfileImage(formData) {
     const response = await fetch(`${API_BASE_URL}/upload`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('jwt_token')}`,
+            'Authorization': `Bearer ${getToken()}`,
         },
         body: formData,
     });
@@ -21,18 +23,18 @@ async function getProfileImage(accountId) {
     const response = await fetch(`${API_BASE_URL}/${accountId}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('jwt_token')}`,
+            'Authorization': `Bearer ${getToken()}`,
         },
     });
 
     if (!response.ok) {
         if (response.status === 404) {
-            return null; //
+            return null;
         }
         throw new Error('Error fetching image');
     }
 
-    const imageBlob = await response.blob(); 
+    const imageBlob = await response.blob();
     return imageBlob;
 }
 

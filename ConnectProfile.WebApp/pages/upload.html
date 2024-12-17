@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Profile Image</title>
     <link rel="stylesheet" href="../styles/styles.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Upload Your Profile Image</h1>
         <form id="upload-form" enctype="multipart/form-data">
+            <label for="name">Image Name</label>
+            <input type="text" id="image-name" name="name" placeholder="Enter image name" required>
+
+            <label for="description">Description</label>
+            <input id="image-description" name="description" placeholder="Enter image description" required></input>
+
+            <label for="file">Select Image</label>
             <input type="file" id="image-file" accept="image/*" required>
+
             <button type="submit">Upload Image</button>
         </form>
-        <p><a href="main.html">Go back to your profile</a></p>
+        <div id="error-message" style="display: none;"></div>
+        <div">
+            <button id="backButton">Back</button>
+    </div>
     </div>
     <script type="module" src="../js/upload.js"></script>
 </body>
+
 </html>

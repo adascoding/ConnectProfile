@@ -1,226 +1,117 @@
-﻿using ConnectProfile.Api.Data;
+﻿using System.Security.Claims;
+using ConnectProfile.Api.Dtos;
 using ConnectProfile.Api.Dtos.UserInfo;
-using ConnectProfile.Api.Entities;
+using ConnectProfile.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ConnectProfile.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class UserInfoController(ApplicationDbContext context) : ControllerBase
+public class UserInfoController : ControllerBase
 {
+    private readonly ILogger<UserInfoController> _logger;
+    private readonly IUserInfoService _userInfoService;
+    private readonly Guid _userId;
+
+    public UserInfoController(
+        ILogger<UserInfoController> logger,
+        IUserInfoService userInfoService,
+        IHttpContextAccessor httpContextAccessor)
+    {
+        _logger = logger;
+        _userInfoService = userInfoService;
+
+        var userIdValue = httpContextAccessor.HttpContext?.User.FindFirstValue("Id");
+        if (string.IsNullOrEmpty(userIdValue))
+        {
+            _logger.LogError("User ID not found in the request.");
+            throw new UnauthorizedAccessException("User not found.");
+        }
+
+        _userId = new Guid(userIdValue);
+        _logger.LogInformation("UserInfoController initialized for UserId: {UserId}", _userId);
+    }
+
     [HttpGet("{accountId}")]
-    public async Task<ActionResult<UserInfoDto>> GetUserInfo(Guid accountId)
+    [ProducesResponseType(typeof(Response<UserInfoDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<Response<UserInfoDto>>> GetUserInfo(Guid accountId)
     {
-        var userInfo = await context.UserInfos
-            .Include(u => u.Address)
-            .FirstOrDefaultAsync(u => u.AccountId == accountId);
+        _logger.LogInformation("GET request received for user info. AccountId: {AccountId}, UserId: {UserId}", accountId, _userId);
 
-        if (userInfo == null)
-            return NotFound();
-
-        var userInfoDto = new UserInfoDto
+        if (accountId != _userId)
         {
-            FirstName = userInfo.FirstName,
-            LastName = userInfo.LastName,
-            PersonalCode = userInfo.PersonalCode,
-            PhoneNumber = userInfo.PhoneNumber,
-            Email = userInfo.Email,
-            Address = new AddressDto
-            {
-                City = userInfo.Address.City,
-                Street = userInfo.Address.Street,
-                HouseNumber = userInfo.Address.HouseNumber,
-                ApartmentNumber = userInfo.Address.ApartmentNumber
-            }
-        };
-
-        return Ok(userInfoDto);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<UserInfo>> CreateUserInfo(UserInfoCreateDto userInfoCreateDto)
-    {
-        try
-        {
-            var userInfo = new UserInfo
-            {
-                Id = Guid.NewGuid(),
-                FirstName = userInfoCreateDto.FirstName,
-                LastName = userInfoCreateDto.LastName,
-                PersonalCode = userInfoCreateDto.PersonalCode,
-                PhoneNumber = userInfoCreateDto.PhoneNumber,
-                Email = userInfoCreateDto.Email,
-                AccountId = userInfoCreateDto.AccountId,
-                Address = new Address
-                {
-                    City = userInfoCreateDto.Address.City,
-                    Street = userInfoCreateDto.Address.Street,
-                    HouseNumber = userInfoCreateDto.Address.HouseNumber,
-                    ApartmentNumber = userInfoCreateDto.Address.ApartmentNumber
-                }
-            };
-
-            context.UserInfos.Add(userInfo);
-            await context.SaveChangesAsync();
-
-            var userInfoDto = new UserInfoDto
-            {
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
-                PersonalCode = userInfo.PersonalCode,
-                PhoneNumber = userInfo.PhoneNumber,
-                Email = userInfo.Email,
-                Address = new AddressDto
-                {
-                    City = userInfo.Address.City,
-                    Street = userInfo.Address.Street,
-                    HouseNumber = userInfo.Address.HouseNumber,
-                    ApartmentNumber = userInfo.Address.ApartmentNumber
-                }
-            };
-
-            return CreatedAtAction(nameof(GetUserInfo), new { accountId = userInfo.AccountId }, userInfoDto);
+            _logger.LogWarning("Forbidden request: AccountId {AccountId} does not match UserId {UserId}", accountId, _userId);
+            return Forbid();
         }
-        catch (Exception ex)
+
+        var response = await _userInfoService.GetUserInfoAsync(accountId);
+        _logger.LogInformation("Fetched user info for AccountId: {AccountId}. Success: {Success}", accountId, response.Success);
+
+        if (!response.Success)
         {
-            Console.WriteLine(ex.Message);
-            return StatusCode(500, "An error occurred while saving the user info.");
+            _logger.LogWarning("User info not found for AccountId: {AccountId}", accountId);
+            return NotFound(response);
         }
+
+        return Ok(response);
     }
 
-    [HttpPatch("{accountId}/FirstName")]
-    public async Task<IActionResult> UpdateFirstName(Guid accountId, [FromBody] string firstName)
+    [HttpPost("{accountId}")]
+    [ProducesResponseType(typeof(Response<UserInfoDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<Response<UserInfoDto>>> CreateUserInfo([FromBody] UserInfoCreateDto dto)
     {
-        if (string.IsNullOrWhiteSpace(firstName))
-            return BadRequest("First name cannot be empty.");
+        _logger.LogInformation("POST request received to create user info. AccountId: {AccountId}", dto.AccountId);
 
-        var userInfo = await context.UserInfos.FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null)
-            return NotFound();
+        if (dto.AccountId != _userId)
+        {
+            _logger.LogWarning("Forbidden request: Provided AccountId {AccountId} does not match UserId {UserId}", dto.AccountId, _userId);
+            return Forbid();
+        }
 
-        userInfo.FirstName = firstName;
-        await context.SaveChangesAsync();
+        var response = await _userInfoService.CreateUserInfoAsync(dto);
+        _logger.LogInformation("User info creation attempt for AccountId: {AccountId}. Success: {Success}", dto.AccountId, response.Success);
 
-        return NoContent();
+        if (!response.Success)
+        {
+            _logger.LogWarning("Failed to create user info for AccountId: {AccountId}. Error: {Message}", dto.AccountId, response.Message);
+            return BadRequest(response);
+        }
+
+        _logger.LogInformation("User info successfully created for AccountId: {AccountId}", dto.AccountId);
+        return CreatedAtAction(nameof(GetUserInfo), new { accountId = _userId }, response);
     }
 
-    [HttpPatch("{accountId}/LastName")]
-    public async Task<IActionResult> UpdateLastName(Guid accountId, [FromBody] string lastName)
+    [HttpPatch("{accountId}/UpdateField")]
+    [ProducesResponseType(typeof(Response<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<Response<bool>>> UpdateField(Guid accountId, [FromBody] UpdateFieldRequestDto dto)
     {
-        if (string.IsNullOrWhiteSpace(lastName))
-            return BadRequest("Last name cannot be empty.");
+        _logger.LogInformation("PATCH request received to update field for AccountId: {AccountId}. Field: {FieldName}", accountId, dto.FieldName);
 
-        var userInfo = await context.UserInfos.FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null)
-            return NotFound();
+        if (accountId != _userId)
+        {
+            _logger.LogWarning("Forbidden request: AccountId {AccountId} does not match UserId {UserId}", accountId, _userId);
+            return Forbid();
+        }
 
-        userInfo.LastName = lastName;
-        await context.SaveChangesAsync();
+        var response = await _userInfoService.UpdateFieldAsync(accountId, dto);
+        _logger.LogInformation("Field update attempt for AccountId: {AccountId}. Field: {FieldName}. Success: {Success}", accountId, dto.FieldName, response.Success);
 
-        return NoContent();
+        if (!response.Success)
+        {
+            _logger.LogWarning("Failed to update field for AccountId: {AccountId}. Field: {FieldName}. Error: {Message}", accountId, dto.FieldName, response.Message);
+            return BadRequest(response);
+        }
+
+        _logger.LogInformation("Successfully updated field for AccountId: {AccountId}. Field: {FieldName}", accountId, dto.FieldName);
+        return Ok(response);
     }
-
-    [HttpPatch("{accountId}/PersonalCode")]
-    public async Task<IActionResult> UpdatePersonalCode(Guid accountId, [FromBody] string personalCode)
-    {
-        if (string.IsNullOrWhiteSpace(personalCode))
-            return BadRequest("Personal code cannot be empty.");
-
-        var userInfo = await context.UserInfos.FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null)
-            return NotFound();
-
-        userInfo.PersonalCode = personalCode;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [HttpPatch("{accountId}/PhoneNumber")]
-    public async Task<IActionResult> UpdatePhoneNumber(Guid accountId, [FromBody] string phoneNumber)
-    {
-        if (string.IsNullOrWhiteSpace(phoneNumber))
-            return BadRequest("Phone number cannot be empty.");
-
-        var userInfo = await context.UserInfos.FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null)
-            return NotFound();
-
-        userInfo.PhoneNumber = phoneNumber;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [HttpPatch("{accountId}/Email")]
-    public async Task<IActionResult> UpdateEmail(Guid accountId, [FromBody] string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-            return BadRequest("Email cannot be empty.");
-
-        var userInfo = await context.UserInfos.FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null)
-            return NotFound();
-
-        userInfo.Email = email;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-    [HttpPatch("{accountId}/City")]
-    public async Task<IActionResult> UpdateCity(Guid accountId, [FromBody] string city)
-    {
-        var userInfo = await context.UserInfos.Include(u => u.Address).FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null || userInfo.Address == null)
-            return NotFound();
-
-        userInfo.Address.City = city;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [HttpPatch("{accountId}/Street")]
-    public async Task<IActionResult> UpdateStreet(Guid accountId, [FromBody] string street)
-    {
-        var userInfo = await context.UserInfos.Include(u => u.Address).FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null || userInfo.Address == null)
-            return NotFound();
-
-        userInfo.Address.Street = street;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [HttpPatch("{accountId}/HouseNumber")]
-    public async Task<IActionResult> UpdateHouseNumber(Guid accountId, [FromBody] string houseNumber)
-    {
-        var userInfo = await context.UserInfos.Include(u => u.Address).FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null || userInfo.Address == null)
-            return NotFound();
-
-        userInfo.Address.HouseNumber = houseNumber;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [HttpPatch("{accountId}/ApartmentNumber")]
-    public async Task<IActionResult> UpdateApartmentNumber(Guid accountId, [FromBody] string apartmentNumber)
-    {
-        var userInfo = await context.UserInfos.Include(u => u.Address).FirstOrDefaultAsync(u => u.AccountId == accountId);
-        if (userInfo == null || userInfo.Address == null)
-            return NotFound();
-
-        userInfo.Address.ApartmentNumber = apartmentNumber;
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
 }

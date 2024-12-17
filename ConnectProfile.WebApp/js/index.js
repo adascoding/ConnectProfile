@@ -6,15 +6,15 @@ const handleAuthButtons = () => {
         document.getElementById('mainButtonDiv').style.display = 'block';
 
         document.getElementById('mainButton').addEventListener('click', () => {
-            window.location.href = 'pages/main.html';
+            window.location.href = './main.html';
         });
     } else {
         document.getElementById('loginButton').addEventListener('click', () => {
-            window.location.href = 'pages/login.html';
+            window.location.href = './login.html';
         });
 
         document.getElementById('registerButton').addEventListener('click', () => {
-            window.location.href = 'pages/register.html';
+            window.location.href = './register.html';
         });
     }
 };

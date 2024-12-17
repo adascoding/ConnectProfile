@@ -1,8 +1,12 @@
 using ConnectProfile.Api.Data;
+using ConnectProfile.Api.Mappers;
+using ConnectProfile.Api.Mappers.Interfaces;
 using ConnectProfile.Api.Repositories;
 using ConnectProfile.Api.Repositories.Interfaces;
 using ConnectProfile.Api.Services;
 using ConnectProfile.Api.Services.Interfaces;
+using ConnectProfile.Api.Validators;
+using ConnectProfile.Api.Validators.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,16 +18,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddTransient<IAccountRepository, AccountRepository>();
-builder.Services.AddTransient<IAccountService, AccountService>();
-builder.Services.AddTransient<IJwtService, JwtService>();
-
+builder.Services.AddTransient<IUserInfoRepository, UserInfoRepository>();
 builder.Services.AddTransient<IImageRepository, ImageRepository>();
+
+builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddTransient<IUserInfoService, UserInfoService>();
 builder.Services.AddTransient<IImageService, ImageService>();
+
+builder.Services.AddTransient<IJwtService, JwtService>();
+builder.Services.AddTransient<IMapperService, MapperService>();
+builder.Services.AddTransient<IValidationService, ValidationService>();
+
 
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection-home")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection-work")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
@@ -72,6 +82,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -90,6 +103,7 @@ app.UseCors(builder =>
     .AllowAnyHeader();
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
