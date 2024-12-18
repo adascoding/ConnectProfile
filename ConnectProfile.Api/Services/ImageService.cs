@@ -74,7 +74,7 @@ public class ImageService(
         return imageEntity;
     }
 
-    private byte[] ResizeImage(byte[] imageBytes, int width, int height)
+    public byte[] ResizeImage(byte[] imageBytes, int width, int height)
     {
         using var imageStream = new MemoryStream(imageBytes);
         using var image = SixLabors.ImageSharp.Image.Load(imageStream);

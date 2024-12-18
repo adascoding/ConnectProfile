@@ -13,6 +13,9 @@ public class ValidationService(IAccountRepository accountRepository) : IValidati
         if (string.IsNullOrWhiteSpace(dto.UserName))
             return "Username is required.";
 
+        if (!IsAlphabetical(dto.UserName))
+            return "Username must contain only alphabetical characters.";
+
         if (string.IsNullOrWhiteSpace(dto.Email) || !IsValidEmail(dto.Email))
             return "A valid email is required.";
 
@@ -131,38 +134,46 @@ public class ValidationService(IAccountRepository accountRepository) : IValidati
                 break;
 
             case "phonenumber":
-                if (string.IsNullOrWhiteSpace(fieldValue))
-                    return "Phone number is required.";
+                if (string.IsNullOrWhiteSpace(fieldValue) || !IsValidPhoneNumber(fieldValue))
+                    return "Phone number must be +3706 and include 7 additional digits.";
                 break;
 
             case "firstname":
                 if (string.IsNullOrWhiteSpace(fieldValue))
                     return "First name is required.";
+                if (fieldValue.Trim().Length < 4)
+                    return "First name must be at least 4 characters long.";
                 break;
 
             case "lastname":
                 if (string.IsNullOrWhiteSpace(fieldValue))
                     return "Last name is required.";
+                if (fieldValue.Trim().Length < 4)
+                    return "Last name must be at least 4 characters long.";
                 break;
 
             case "city":
-                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue.Length > 100)
-                    return "City is required and cannot exceed 100 characters.";
+                if (string.IsNullOrWhiteSpace(fieldValue))
+                    return "City is required.";
+                if (fieldValue.Length > 100)
+                    return "City cannot exceed 100 characters.";
+                if (!IsAlphabetical(fieldValue))
+                    return "City must contain only alphabetical symbols.";
                 break;
 
             case "street":
-                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue.Length > 200)
-                    return "Street is required and cannot exceed 200 characters.";
+                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue.Length > 100)
+                    return "Street is required and cannot exceed 100 characters.";
                 break;
 
             case "housenumber":
-                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue.Length > 20)
-                    return "House number is required and cannot exceed 20 characters.";
+                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue.Length > 4)
+                    return "House number is required and cannot exceed 4 characters.";
                 break;
 
             case "apartmentnumber":
-                if (fieldValue?.Length > 10)
-                    return "Apartment number cannot exceed 10 characters.";
+                if (string.IsNullOrWhiteSpace(fieldValue) || fieldValue?.Length > 3)
+                    return "Apartment number is required and cannot exceed 3 characters.";
                 break;
 
             default:
@@ -170,6 +181,16 @@ public class ValidationService(IAccountRepository accountRepository) : IValidati
         }
 
         return null;
+    }
+
+    private bool IsValidPhoneNumber(string phoneNumber)
+    {
+        return Regex.IsMatch(phoneNumber, @"^\+3706\d{7}$");
+    }
+
+    private bool IsAlphabetical(string input)
+    {
+        return Regex.IsMatch(input, @"^[a-zA-Z\s]+$");
     }
 
 }
