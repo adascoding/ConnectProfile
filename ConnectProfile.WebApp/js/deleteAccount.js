@@ -91,6 +91,7 @@ deleteAccountForm.addEventListener("submit", async (e) => {
         deleteResponseMessage.style.color = "red";
         deleteResponseMessage.textContent = `An error occurred: ${error.message}`;
     }
+    loadUsers(); 
 });
 
 logoutButton.onclick = () => {

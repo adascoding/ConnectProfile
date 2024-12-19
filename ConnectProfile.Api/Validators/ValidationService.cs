@@ -23,7 +23,7 @@ public class ValidationService(IAccountRepository accountRepository) : IValidati
             return "Password is required.";
 
         if (!IsValidPassword(dto.Password))
-            return "Password must be at least 8 characters long and contain a mix of uppercase, lowercase, digits, and special characters.";
+            return "Password must be at least 6 characters long and a mix of digit.";
 
         var existingUser = await accountRepository.GetByUserNameAsync(dto.UserName);
         if (existingUser != null)
